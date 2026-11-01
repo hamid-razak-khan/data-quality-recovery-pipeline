@@ -97,7 +97,7 @@ This project delivers a complete architectural solution to these problems, backe
 
 ```mermaid
 flowchart TD
-    subgraph UI ["Client Layer (React 19 + Vite + TailwindCSS 4)"]
+    subgraph UI ["Client Layer: React 19 + Vite + TailwindCSS 4"]
         DASH["Operations Dashboard"]
         INGEST["Data Ingestion & File Upload"]
         QUAR["Quarantine Store & Correction Modal"]
@@ -106,14 +106,14 @@ flowchart TD
         RUNS["Execution Audit Ledger"]
     end
 
-    subgraph API ["API & Service Layer (Django 5.1 + DRF)"]
-        REST["REST API Endpoints (/api/...)"]
+    subgraph API ["API & Service Layer: Django 5.1 + DRF"]
+        REST["REST API Endpoints: /api/..."]
         
         subgraph ENGINE ["Data Pipeline Engine"]
             DETECT["Dynamic Schema Detection"]
             REGISTRY["Configurable Schema Registry"]
-            VAL_SCHEMA["Schema Validator (Syntactic)"]
-            VAL_BIZ["Business Validator (Semantic)"]
+            VAL_SCHEMA["Schema Validator - Syntactic"]
+            VAL_BIZ["Business Validator - Semantic"]
             DEDUP["In-Batch Duplicate Detector"]
             TRANSFORM["Transformer & Canonical Normalizer"]
             PUB["Idempotent PostgreSQL Publisher"]
@@ -122,35 +122,35 @@ flowchart TD
         end
     end
 
-    subgraph DB ["Target Persistence Layer (Supabase PostgreSQL 15)"]
+    subgraph DB ["Target Persistence Layer: Supabase PostgreSQL 15"]
         T_FILES[("source_files")]
         T_RUNS[("pipeline_runs")]
-        T_RAW[("source_records (Raw Audit)")]
-        T_PUB[("processed_orders (Canonical Store)")]
-        T_QUAR[("quarantine_records (Quarantine Store)")]
-        T_HIST[("correction_history (Audit Trail)")]
-        T_REPLAY[("replay_history (Replay Ledger)")]
+        T_RAW[("source_records - Raw Audit")]
+        T_PUB[("processed_orders - Canonical Store")]
+        T_QUAR[("quarantine_records - Quarantine Store")]
+        T_HIST[("correction_history - Audit Trail")]
+        T_REPLAY[("replay_history - Replay Ledger")]
     end
 
-    UI -->|REST / JSON & Multipart| REST
+    UI -->|"REST / JSON & Multipart"| REST
     REST --> ENGINE
     DETECT --> REGISTRY
     REGISTRY --> VAL_SCHEMA
     VAL_SCHEMA --> VAL_BIZ
     VAL_BIZ --> DEDUP
     
-    DEDUP -->|Valid Records| TRANSFORM
+    DEDUP -->|"Valid Records"| TRANSFORM
     TRANSFORM --> PUB
-    PUB -->|Atomic Upsert| T_PUB
+    PUB -->|"Atomic Upsert"| T_PUB
 
-    VAL_SCHEMA -->|Schema Errors| QM
-    VAL_BIZ -->|Business Rule Violations| QM
-    DEDUP -->|Duplicate Business Keys| QM
+    VAL_SCHEMA -->|"Schema Errors"| QM
+    VAL_BIZ -->|"Business Rule Violations"| QM
+    DEDUP -->|"Duplicate Business Keys"| QM
     QM --> T_QUAR
 
-    RE -->|Atomic Claim (select_for_update)| T_QUAR
-    RE -->|Strict Re-Validation| VAL_SCHEMA
-    RE -->|Re-Validated Records| PUB
+    RE -->|"Atomic Claim - Row Lock"| T_QUAR
+    RE -->|"Strict Re-Validation"| VAL_SCHEMA
+    RE -->|"Re-Validated Records"| PUB
     RE --> T_HIST
     RE --> T_REPLAY
 
@@ -319,7 +319,7 @@ The pipeline utilizes a declarative **`SchemaRegistry`** (`backend/data_pipeline
   - `order_id`: Required, unique, non-empty.
   - `quantity`: Positive integer $\ge 1$.
   - `unit_price`: Numeric decimal $\ge 0.00$.
-  - `total_amount`: Exact arithmetic match: $| \text{total\_amount} - (\text{quantity} \times \text{unit\_price}) | \le 0.01$.
+  - `total_amount`: Exact arithmetic match: `abs(total_amount - (quantity * unit_price)) <= 0.01`.
   - `order_date`: Valid timestamp between year 2000 and 2100.
   - `order_status`: Restricted to `['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED']`.
 
@@ -388,10 +388,10 @@ The core operational guarantee of the replay engine is: **only corrected records
 ```mermaid
 stateDiagram-v2
     [*] --> PENDING: Ingestion Failure
-    PENDING --> CORRECTED: Operator Correction (Payload Diff Logged)
-    CORRECTED --> REPLAYING: Atomic Claim (select_for_update)
-    REPLAYING --> REPLAYED: Re-Validation Passed (Published to Target Store)
-    REPLAYING --> FAILED: Re-Validation Failed (Remains Quarantined)
+    PENDING --> CORRECTED: Operator Correction - Diff Logged
+    CORRECTED --> REPLAYING: Atomic Claim - Row Lock
+    REPLAYING --> REPLAYED: Re-Validation Passed - Target Upsert
+    REPLAYING --> FAILED: Re-Validation Failed - Retained in Quarantine
     FAILED --> CORRECTED: Operator Re-Correction
     REPLAYED --> [*]
 ```

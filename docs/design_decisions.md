@@ -63,10 +63,10 @@ Implement an isolated, stateful **Quarantine and Controlled Replay Engine** (`Re
 ```mermaid
 stateDiagram-v2
     [*] --> PENDING: Ingestion Failure
-    PENDING --> CORRECTED: Operator Correction (Payload Diff Logged)
-    CORRECTED --> REPLAYING: Atomic Claim (select_for_update)
-    REPLAYING --> REPLAYED: Re-Validation Passed (Published to Target Store)
-    REPLAYING --> FAILED: Re-Validation Failed (Remains Quarantined)
+    PENDING --> CORRECTED: Operator Correction - Diff Logged
+    CORRECTED --> REPLAYING: Atomic Claim - Row Lock
+    REPLAYING --> REPLAYED: Re-Validation Passed - Target Store Upsert
+    REPLAYING --> FAILED: Re-Validation Failed - Retained in Quarantine
     FAILED --> CORRECTED: Operator Re-Correction
     REPLAYED --> [*]
 ```

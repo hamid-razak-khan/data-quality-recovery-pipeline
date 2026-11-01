@@ -35,35 +35,35 @@ flowchart TD
         end
     end
 
-    subgraph DB ["Target Persistence Layer (Supabase PostgreSQL 15)"]
+    subgraph DB ["Target Persistence Layer: Supabase PostgreSQL 15"]
         T_FILES[("source_files")]
         T_RUNS[("pipeline_runs")]
-        T_RAW[("source_records (Raw Audit)")]
-        T_PUB[("processed_orders (Target Canonical Store)")]
-        T_QUAR[("quarantine_records (Quarantine Store)")]
-        T_HIST[("correction_history (Audit Trail)")]
-        T_REPLAY[("replay_history (Replay Ledger)")]
+        T_RAW[("source_records - Raw Audit")]
+        T_PUB[("processed_orders - Target Store")]
+        T_QUAR[("quarantine_records - Quarantine Store")]
+        T_HIST[("correction_history - Audit Trail")]
+        T_REPLAY[("replay_history - Replay Ledger")]
     end
 
-    UI -->|REST / JSON & Multipart| REST
+    UI -->|"REST / JSON & Multipart"| REST
     REST --> ENGINE
     DETECT --> REGISTRY
     REGISTRY --> VAL_SCHEMA
     VAL_SCHEMA --> VAL_BIZ
     VAL_BIZ --> DEDUP
     
-    DEDUP -->|Valid Records| TRANSFORM
+    DEDUP -->|"Valid Records"| TRANSFORM
     TRANSFORM --> PUB
-    PUB -->|Atomic Upsert| T_PUB
+    PUB -->|"Atomic Upsert"| T_PUB
 
-    VAL_SCHEMA -->|Schema Errors| QM
-    VAL_BIZ -->|Business Rule Violations| QM
-    DEDUP -->|Duplicate Business Keys| QM
+    VAL_SCHEMA -->|"Schema Errors"| QM
+    VAL_BIZ -->|"Business Rule Violations"| QM
+    DEDUP -->|"Duplicate Business Keys"| QM
     QM --> T_QUAR
 
-    RE -->|Atomic Claim (select_for_update)| T_QUAR
-    RE -->|Strict Re-Validation| VAL_SCHEMA
-    RE -->|Re-Validated Records| PUB
+    RE -->|"Atomic Claim - Row Lock"| T_QUAR
+    RE -->|"Strict Re-Validation"| VAL_SCHEMA
+    RE -->|"Re-Validated Records"| PUB
     RE --> T_HIST
     RE --> T_REPLAY
 
@@ -120,7 +120,7 @@ stateDiagram-v2
     Quarantine_Pending --> Quarantine_Corrected: Operator Edits in UI
     
     state "Controlled Replay Execution" as ReplayOp {
-        Quarantine_Corrected --> Atomic_Claim: select_for_update(skip_locked=True)
+        Quarantine_Corrected --> Atomic_Claim: Atomic Claim - Row Lock
         Atomic_Claim --> Re_Validate: Full Schema & Business Re-Validation
         Re_Validate --> Replay_Success: All Rules Pass
         Re_Validate --> Replay_Fail: Flaws Persist
