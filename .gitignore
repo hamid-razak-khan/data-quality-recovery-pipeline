@@ -1,0 +1,98 @@
+# Git ignore for Data Quality & Recovery Pipeline
+
+# Python & Virtual Environments
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Quality
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+coverage.xml
+*.cover
+
+# Pipeline Storage & Staged Uploads (Keep only .gitkeep)
+backend/storage/raw/*
+!backend/storage/raw/.gitkeep
+backend/storage/processed/*
+!backend/storage/processed/.gitkeep
+backend/storage/quarantine/*
+!backend/storage/quarantine/.gitkeep
+backend/storage/corrected/*
+!backend/storage/corrected/.gitkeep
+
+# Databases & Local Logs
+db.sqlite3
+db.sqlite3-journal
+*.log
+logs/
+local_settings.py
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+frontend/.vite-temp/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment & Secrets (NEVER COMMIT CREDENTIALS)
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+*.env.local
+
+# Temporary & Scratch Files
+tmp/
+temp/
+scratch/
+*.tmp
+
+# IDEs & Operating Systems
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+Desktop.ini
