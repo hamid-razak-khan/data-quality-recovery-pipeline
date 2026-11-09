@@ -77,24 +77,24 @@ export default function PipelineRuns() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Pipeline Execution History</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900">Pipeline Execution History</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Audit ledger of every batch ingestion run, processing duration, yield, and reconciliation balance.
           </p>
         </div>
         <button
           onClick={fetchRuns}
-          className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-xs"
+          className="self-start sm:self-auto flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-xs"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh Runs
         </button>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
-        <form onSubmit={handleSearchSubmit} className="relative w-full md:w-80">
+      <div className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
@@ -105,12 +105,12 @@ export default function PipelineRuns() {
           />
         </form>
 
-        <div className="flex items-center gap-2 text-xs text-slate-600">
-          <Filter className="w-3.5 h-3.5 text-slate-400" />
+        <div className="flex items-center gap-2 text-xs text-slate-600 w-full sm:w-auto">
+          <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-auto px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Run Statuses</option>
             <option value="COMPLETED">COMPLETED (100% Clean)</option>
@@ -127,7 +127,7 @@ export default function PipelineRuns() {
           <LoadingState message="Fetching pipeline execution runs..." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full text-left border-collapse text-xs min-w-[850px]">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Run ID</th>

@@ -415,12 +415,12 @@ export default function Dashboard() {
 
       {/* Latest Pipeline Run Summary Card */}
       {latest_run && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-lg shrink-0">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-start gap-3 sm:gap-4 min-w-0">
+            <div className="p-2.5 sm:p-3 bg-blue-50 text-blue-600 rounded-lg shrink-0">
               <Clock className="w-5 h-5" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Latest Pipeline Run
@@ -434,9 +434,9 @@ export default function Dashboard() {
                 </span>
                 <StatusBadge status={latest_run.run_status} />
               </div>
-              <h4 className="text-base font-semibold text-slate-900 mt-1 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-slate-400" />
-                {latest_run.filename}
+              <h4 className="text-sm sm:text-base font-semibold text-slate-900 mt-1 flex items-center gap-2 truncate">
+                <FileText className="w-4 h-4 text-slate-400 shrink-0" />
+                <span className="truncate">{latest_run.filename}</span>
               </h4>
               <p className="text-xs text-slate-500 mt-1">
                 Started {formatDateTime(latest_run.start_time)} • Duration: {formatDuration(latest_run.execution_duration)} • Throughput: {latest_run.throughput_rps || 0} rec/s
@@ -444,25 +444,27 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-6 border-t md:border-t-0 md:border-l border-slate-100 pt-3 md:pt-0 md:pl-6 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 border-t lg:border-t-0 lg:border-l border-slate-100 pt-3 lg:pt-0 lg:pl-6 text-xs items-center shrink-0">
             <div>
-              <span className="text-slate-400 block">Total Records</span>
+              <span className="text-slate-400 block text-[11px]">Total Records</span>
               <span className="font-semibold text-slate-800 text-sm font-mono">{formatNumber(latest_run.total_records)}</span>
             </div>
             <div>
-              <span className="text-slate-400 block">Valid (Published)</span>
+              <span className="text-slate-400 block text-[11px]">Valid (Published)</span>
               <span className="font-semibold text-emerald-600 text-sm font-mono">{formatNumber(latest_run.valid_records)}</span>
             </div>
             <div>
-              <span className="text-slate-400 block">Quarantined</span>
+              <span className="text-slate-400 block text-[11px]">Quarantined</span>
               <span className="font-semibold text-rose-600 text-sm font-mono">{formatNumber(latest_run.rejected_records)}</span>
             </div>
-            <button
-              onClick={() => handleInspectRun(latest_run)}
-              className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-1"
-            >
-              Inspect <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            <div className="col-span-2 sm:col-span-1 flex items-center justify-end">
+              <button
+                onClick={() => handleInspectRun(latest_run)}
+                className="w-full sm:w-auto px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50/70 hover:bg-blue-100/70 rounded-lg transition-colors flex items-center justify-center gap-1"
+              >
+                Inspect <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -740,15 +742,15 @@ export default function Dashboard() {
               </div>
             )}
 
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-3 border-t border-slate-200">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
                   type="button"
                   onClick={() => {
                     setIsRunModalOpen(false);
                     navigate(`/quarantine?run_id=${selectedRun.full_run_id || selectedRun.run_id}`);
                   }}
-                  className="px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-colors flex items-center gap-1.5"
+                  className="px-3 py-2 sm:py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-colors flex items-center justify-center gap-1.5"
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
                   Inspect Quarantined ({selectedRun.rejected_records})
@@ -759,7 +761,7 @@ export default function Dashboard() {
                     setIsRunModalOpen(false);
                     navigate(`/runs?search=${encodeURIComponent(selectedRun.filename)}`);
                   }}
-                  className="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors flex items-center gap-1.5"
+                  className="px-3 py-2 sm:py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors flex items-center justify-center gap-1.5"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   View in Run History
@@ -768,7 +770,7 @@ export default function Dashboard() {
               <button
                 type="button"
                 onClick={() => setIsRunModalOpen(false)}
-                className="px-4 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                className="px-4 py-2 sm:py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors text-center"
               >
                 Close
               </button>

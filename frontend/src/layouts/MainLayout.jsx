@@ -9,6 +9,7 @@ import { Sparkles, Loader2 } from 'lucide-react';
 
 export default function MainLayout() {
   const [toast, setToast] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isGenerateOpen, setIsGenerateOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [genParams, setGenParams] = useState({
@@ -28,7 +29,7 @@ export default function MainLayout() {
     try {
       const res = await api.generateData(genParams);
       showToast(
-        `Generated ${res.record_count} synthetic orders in ${res.file_name}`,
+        `Generated ${res.record_count} synthetic source records in ${res.file_name}`,
         'success',
         'Data Generated'
       );
@@ -46,12 +47,18 @@ export default function MainLayout() {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50">
-      <Sidebar />
+      <Sidebar
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+      />
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Navbar onOpenGenerateModal={() => setIsGenerateOpen(true)} />
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        <Navbar
+          onOpenGenerateModal={() => setIsGenerateOpen(true)}
+          onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
+        />
 
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 md:p-6 lg:p-8">
           <Outlet context={{ showToast }} />
         </main>
       </div>
@@ -65,12 +72,12 @@ export default function MainLayout() {
       >
         <form onSubmit={handleGenerateData} className="space-y-4">
           <p className="text-xs text-slate-500">
-            Generate reproducible customer and order records with controlled invalid patterns (missing fields, invalid foreign keys, negative amounts, malformed dates).
+            Generate reproducible source records with controlled invalid patterns (missing fields, invalid values, negative amounts, malformed dates).
           </p>
 
           <div>
             <label className="block text-xs font-medium text-slate-700 mb-1">
-              Number of Order Records
+              Number of Records
             </label>
             <input
               type="number"
@@ -111,18 +118,18 @@ export default function MainLayout() {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setIsGenerateOpen(false)}
-              className="px-3.5 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={generating}
-              className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50"
             >
               {generating ? (
                 <>

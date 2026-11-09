@@ -113,12 +113,12 @@ export default function Ingestion() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto w-full">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Data Ingestion Engine</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">Data Ingestion Engine</h2>
         <p className="text-xs text-slate-500 mt-0.5">
-          Ingest raw order files (CSV/JSON), enforce cryptographic hashing, validate schemas, and dispatch to PostgreSQL.
+          Ingest raw source files (CSV/JSON), enforce cryptographic hashing, validate schemas, and dispatch to PostgreSQL.
         </p>
       </div>
 
@@ -128,7 +128,7 @@ export default function Ingestion() {
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all ${
+        className={`relative border-2 border-dashed rounded-xl p-5 sm:p-8 text-center transition-all ${
           dragActive
             ? 'border-blue-500 bg-blue-50/50'
             : selectedFile
@@ -146,14 +146,14 @@ export default function Ingestion() {
 
         <div className="flex flex-col items-center justify-center">
           <div className="p-3 bg-blue-50 text-blue-600 rounded-full mb-3">
-            <UploadCloud className="w-8 h-8" />
+            <UploadCloud className="w-7 h-7 sm:w-8 sm:h-8" />
           </div>
 
           {selectedFile ? (
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-slate-800 flex items-center justify-center gap-2">
-                <FileText className="w-4 h-4 text-blue-600" />
-                {selectedFile.name}
+              <p className="text-sm font-semibold text-slate-800 flex items-center justify-center gap-2 break-all px-2">
+                <FileText className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>{selectedFile.name}</span>
               </p>
               <p className="text-xs text-slate-500">
                 {(selectedFile.size / 1024).toFixed(1)} KB • {selectedFile.type || 'text/csv'}
@@ -161,8 +161,8 @@ export default function Ingestion() {
             </div>
           ) : (
             <>
-              <p className="text-sm font-semibold text-slate-800">
-                Drag and drop your order dataset here, or{' '}
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 px-2">
+                Drag and drop your source dataset here, or{' '}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -171,19 +171,19 @@ export default function Ingestion() {
                   browse files
                 </button>
               </p>
-              <p className="text-xs text-slate-400 mt-1">Supported formats: CSV, JSON (up to 50MB)</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 mt-1">Supported formats: CSV, JSON (up to 50MB)</p>
             </>
           )}
 
           {selectedFile && !uploadedFileRecord && (
-            <div className="mt-4 flex items-center gap-3">
+            <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => {
                   setSelectedFile(null);
                   if (fileInputRef.current) fileInputRef.current.value = '';
                 }}
-                className="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                className="px-3 py-2 sm:py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-center"
               >
                 Choose Different File
               </button>
@@ -191,7 +191,7 @@ export default function Ingestion() {
                 type="button"
                 onClick={handleUpload}
                 disabled={uploading}
-                className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs transition-colors disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs transition-colors disabled:opacity-50"
               >
                 {uploading ? (
                   <>
@@ -209,19 +209,19 @@ export default function Ingestion() {
 
       {/* Uploaded File Details & Schema Preview */}
       {uploadedFileRecord && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-            <div>
+        <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-6 space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Validated File</span>
                 <StatusBadge status="COMPLETED" text="Verified" />
               </div>
-              <h3 className="text-base font-bold text-slate-900 mt-0.5">{uploadedFileRecord.filename}</h3>
-              <p className="text-xs text-slate-500 font-mono mt-1">SHA-256: {uploadedFileRecord.file_hash}</p>
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 mt-0.5 truncate">{uploadedFileRecord.filename}</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500 font-mono mt-1 break-all">SHA-256: {uploadedFileRecord.file_hash}</p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 shrink-0">
+              <div className="w-full sm:w-auto">
                 <label className="block text-[11px] font-medium text-slate-500 uppercase mb-1">
                   Batch Chunk Size
                 </label>
@@ -229,7 +229,7 @@ export default function Ingestion() {
                   value={batchSize}
                   onChange={(e) => setBatchSize(parseInt(e.target.value))}
                   disabled={runningPipeline}
-                  className="px-3 py-1.5 text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full sm:w-auto px-3 py-1.5 text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={1000}>1,000 records</option>
                   <option value={5000}>5,000 records (recommended)</option>
@@ -241,7 +241,7 @@ export default function Ingestion() {
                 type="button"
                 onClick={handleRunPipeline}
                 disabled={runningPipeline}
-                className="flex items-center gap-2 px-5 py-2.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs transition-colors self-end disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs transition-colors disabled:opacity-50"
               >
                 {runningPipeline ? (
                   <>
@@ -265,11 +265,11 @@ export default function Ingestion() {
                 Raw Source File Preview (First 5 Rows)
               </h4>
               <div className="overflow-x-auto border border-slate-200 rounded-lg">
-                <table className="w-full text-left text-xs">
+                <table className="w-full text-left text-xs min-w-[500px]">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-600">
                     <tr>
                       {Object.keys(previewRows[0] || {}).map((col) => (
-                        <th key={col} className="py-2 px-3 font-semibold whitespace-nowrap">
+                        <th key={col} className="py-2.5 px-3 font-semibold whitespace-nowrap">
                           {col}
                         </th>
                       ))}
@@ -295,53 +295,53 @@ export default function Ingestion() {
 
       {/* Execution Results Summary */}
       {pipelineResult && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              Ingestion Execution Summary
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <span>Ingestion Execution Summary</span>
             </h3>
             <StatusBadge status={pipelineResult.status} />
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-lg text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-3.5 sm:p-4 bg-slate-50 rounded-lg text-xs">
             <div>
-              <span className="text-slate-500 block">Total Processed</span>
-              <span className="text-lg font-bold text-slate-900">{formatNumber(pipelineResult.total_records)}</span>
+              <span className="text-slate-500 block text-[11px]">Total Processed</span>
+              <span className="text-base sm:text-lg font-bold text-slate-900">{formatNumber(pipelineResult.total_records)}</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Valid (Published)</span>
-              <span className="text-lg font-bold text-emerald-600">{formatNumber(pipelineResult.valid_records)}</span>
+              <span className="text-slate-500 block text-[11px]">Valid (Published)</span>
+              <span className="text-base sm:text-lg font-bold text-emerald-600">{formatNumber(pipelineResult.valid_records)}</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Quarantined</span>
-              <span className="text-lg font-bold text-rose-600">{formatNumber(pipelineResult.rejected_records)}</span>
+              <span className="text-slate-500 block text-[11px]">Quarantined</span>
+              <span className="text-base sm:text-lg font-bold text-rose-600">{formatNumber(pipelineResult.rejected_records)}</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Duration</span>
-              <span className="text-lg font-bold text-slate-900">{formatDuration(pipelineResult.execution_duration)}</span>
+              <span className="text-slate-500 block text-[11px]">Duration</span>
+              <span className="text-base sm:text-lg font-bold text-slate-900">{formatDuration(pipelineResult.execution_duration)}</span>
             </div>
           </div>
 
           {/* Reconciliation Balance check */}
-          <div className="p-3 rounded-lg border border-slate-200 bg-white flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <div className="p-3 rounded-lg border border-slate-200 bg-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span className="font-semibold text-slate-700">Reconciliation Formula:</span>
-              <span className="text-slate-500">
-                {pipelineResult.total_records} (Total) = {pipelineResult.valid_records} (Valid) + {pipelineResult.rejected_records} (Quarantine)
+              <span className="text-slate-500 font-mono">
+                {pipelineResult.total_records} = {pipelineResult.valid_records} (Valid) + {pipelineResult.rejected_records} (Quarantine)
               </span>
             </div>
-            <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
+            <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[11px] shrink-0">
               Balanced (100%)
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2">
             {pipelineResult.rejected_records > 0 && (
               <Link
                 to="/quarantine"
-                className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-amber-600 hover:bg-amber-700 rounded-lg transition-colors shadow-xs"
+                className="flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-amber-600 hover:bg-amber-700 rounded-lg transition-colors shadow-xs text-center"
               >
                 <AlertTriangle className="w-3.5 h-3.5" />
                 Inspect Quarantined Records ({pipelineResult.rejected_records})
@@ -349,10 +349,10 @@ export default function Ingestion() {
             )}
             <Link
               to="/processed"
-              className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors text-center"
             >
               <Database className="w-3.5 h-3.5" />
-              View Published Orders
+              View Published Records
             </Link>
           </div>
         </div>

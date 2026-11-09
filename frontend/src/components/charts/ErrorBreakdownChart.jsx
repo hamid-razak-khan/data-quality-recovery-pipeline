@@ -114,7 +114,7 @@ export default function ErrorBreakdownChart({ data = [] }) {
             <BarChart
               layout="vertical"
               data={data}
-              margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+              margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
               onClick={handleChartClick}
               className="cursor-pointer"
             >
@@ -126,7 +126,7 @@ export default function ErrorBreakdownChart({ data = [] }) {
                 stroke="#94a3b8"
                 fontSize={10}
                 tickLine={false}
-                width={130}
+                width={110}
               />
               <Tooltip content={<CustomErrorTooltip />} />
               <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '6px' }} />

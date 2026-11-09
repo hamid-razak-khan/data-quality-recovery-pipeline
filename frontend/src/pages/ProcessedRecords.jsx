@@ -76,23 +76,23 @@ export default function ProcessedRecords() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Processed Target Records</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900">Processed Target Records</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Published, transformed, schema-compliant records stored in Supabase PostgreSQL target table.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <button
             onClick={handleExportCsv}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-xs transition-colors"
+            className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-xs transition-colors"
           >
-            <Download className="w-3.5 h-3.5" /> Export to CSV
+            <Download className="w-3.5 h-3.5" /> <span className="hidden xs:inline">Export to </span>CSV
           </button>
           <button
             onClick={fetchOrders}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-xs"
+            className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-xs"
           >
             <RefreshCw className="w-3.5 h-3.5" /> Refresh
           </button>
@@ -100,7 +100,7 @@ export default function ProcessedRecords() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         <form onSubmit={handleSearchSubmit} className="relative w-full md:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
@@ -112,17 +112,17 @@ export default function ProcessedRecords() {
           />
         </form>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
           {/* Status Filter */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-600">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex items-center gap-1.5 text-xs text-slate-600 w-full sm:w-auto">
+            <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-auto px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Statuses</option>
               <option value="ACTIVE">ACTIVE</option>
@@ -138,12 +138,12 @@ export default function ProcessedRecords() {
           </div>
 
           {/* Date Filter */}
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-1.5 text-xs w-full sm:w-auto">
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="px-2 py-1 text-xs border border-slate-300 rounded-md text-slate-600"
+              className="flex-1 sm:flex-none px-2 py-1 text-xs border border-slate-300 rounded-md text-slate-600"
               title="Start Date"
             />
             <span className="text-slate-400">to</span>
@@ -151,7 +151,7 @@ export default function ProcessedRecords() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="px-2 py-1 text-xs border border-slate-300 rounded-md text-slate-600"
+              className="flex-1 sm:flex-none px-2 py-1 text-xs border border-slate-300 rounded-md text-slate-600"
               title="End Date"
             />
           </div>
@@ -164,7 +164,7 @@ export default function ProcessedRecords() {
           <LoadingState message="Fetching target processed records from PostgreSQL..." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full text-left border-collapse text-xs min-w-[850px]">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Record / Reading ID</th>
@@ -235,13 +235,14 @@ export default function ProcessedRecords() {
         )}
 
         {/* Pagination Footer */}
-        <div className="px-6 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-          <span>Showing {orders.length} of {formatNumber(totalCount)} target records</span>
+        <div className="px-4 sm:px-6 py-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500">
+          <span className="text-center sm:text-left">Showing {orders.length} of {formatNumber(totalCount)} target records</span>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className="p-1 rounded hover:bg-slate-100 disabled:opacity-40 transition-colors"
+              aria-label="Previous page"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -250,6 +251,7 @@ export default function ProcessedRecords() {
               onClick={() => setPage((p) => p + 1)}
               disabled={orders.length < 50}
               className="p-1 rounded hover:bg-slate-100 disabled:opacity-40 transition-colors"
+              aria-label="Next page"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
